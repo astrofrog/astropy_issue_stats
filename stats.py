@@ -1,12 +1,17 @@
 import json
-from urllib2 import urlopen
+
+try:
+    from urllib2 import urlopen
+except ImportError:
+    from urllib.request import urlopen
 
 created = []
 closed = []
 
 page = 1
 while True:
-    c = json.load(urlopen('https://api.github.com/repos/astropy/astropy/issues?state=closed&per_page=100&page={page}'.format(page=page)))
+    response = urlopen('https://api.github.com/repos/astropy/astropy/issues?state=closed&per_page=100&page={page}'.format(page=page)).read().decode('utf-8')
+    c = json.loads(response)
     for i in c:
         created.append(i['created_at'])
         closed.append(i['closed_at'])
@@ -16,7 +21,8 @@ while True:
 
 page = 1
 while True:
-    o = json.load(urlopen('https://api.github.com/repos/astropy/astropy/issues?state=open&per_page=100&page={page}'.format(page=page)))
+    response = urlopen('https://api.github.com/repos/astropy/astropy/issues?state=open&per_page=100&page={page}'.format(page=page)).read().decode('utf-8')
+    o = json.loads(response)
     for i in o:
         created.append(i['created_at'])
     if len(o) == 0:
